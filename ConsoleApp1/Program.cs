@@ -9,20 +9,22 @@ namespace ConsoleApp1
     class Program
     {
         private static VelibSoapConsole.ServiceVelibClient service = new VelibSoapConsole.ServiceVelibClient();
-        private static string help = "Les commande sont suppoter en miniscule, masescule ou un melange des deux\n" +
-            "towns : rend la liste des ville qui sont disponible (qui ont des station)\n" +
-            "stations [town] : rend les stations de la ville demandé" +
-            "availablevelib [town] [station]: rend le nombre de vélo disponible dans une station données qui se trouve dans une ville.";
+        private static string help = "Les commandes sont suppotées en miniscule, masescule ou un melange des deux\n" +
+            "\ttowns : rend la liste des villes qui sont disponibles (qui ont des stations)\n" +
+            "\tstations [town] : rend les stations de la ville demandée\n" +
+            "\tavailablevelib [town] [station]: rend le nombre de vélo disponible dans une station données qui se trouve dans une ville.\n" +
+            "\texit ou quit: pour quiter le programme";
         private static string error = "cette commande n'existe pas";
         static void Main(string[] args)
         {
             service.getTowns();
             Console.WriteLine("Bonjour ! Client Console");
-            Console.WriteLine("Help : pour voir les commande et à quoi elles servent");
+            Console.WriteLine("Help : pour voir les commandes et à quoi elles servent");
+            Console.Out.Flush();
             string command;
             do
             {
-                Console.Write("> ");
+                Console.Write(" > ");
                 command = Console.ReadLine().ToLower().Trim();
                 if (command.Split().Length != 1) {
                     checkCommand(command);
@@ -67,7 +69,7 @@ namespace ConsoleApp1
             }
             else
             {
-                string err = (tab.Length == 0) ? "merci de donner une commande vous avez entrer une ligne vide\n" : command + ": " + error;
+                string err = (tab.Length == 0) ? "merci de donner une commande, vous avez entrer une ligne vide\n" : command + ": " + error;
                 Console.WriteLine(err);
             }
 
@@ -79,7 +81,7 @@ namespace ConsoleApp1
             string[] station = service.getStations(town);
             if(station == null)
             {
-                return "La ville indiqué n'existe pas\n";
+                return "La ville indiquée n'existe pas\n";
             }
             foreach (string str in station)
             {
@@ -102,11 +104,11 @@ namespace ConsoleApp1
         }
         private static string AvailableVelib(string town,string station)
         {
-            string print = "le nombre de velibs disponible est dans la station " + station + " qui se trouve dans la ville " + town + ": ";
+            string print = "le nombre de velibs disponibles dans la station " + station + " qui se trouve dans la ville " + town + ": ";
             int v = service.getAvailableBikes(town,station,0);
             if (v == -1)
             {
-                return "Assurez vous du nom de la ville et de la stations";
+                return "Assurez vous du nom de la ville et de la station";
             }
             return print + v;
         }
