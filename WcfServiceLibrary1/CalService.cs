@@ -6,6 +6,7 @@ using System.Net;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using Newtonsoft.Json.Linq;
 
 namespace WcfServiceLibrary
@@ -14,12 +15,15 @@ namespace WcfServiceLibrary
     {
         private static readonly string API_KEY = "3262b38e08b9a4da636a6611bf24c9de0fb93069";
         public const int DelayMilliseconds = 10000;
-
         static Action<int, string, string> m_Event1 = delegate { };//
-
+        static string town,  station;
+        static int time;
         static Action m_Event2 = delegate { };
-        public void Calculate(string town, string station,int time)
+        public void Calculate(string town1, string station1,int time1)
         {
+            town = town1;
+            station = station1;
+            time1 = time1;
             int veloLibre;
             veloLibre = getAvailableBikesService(town, station);
             m_Event1(veloLibre, town, station);
@@ -36,7 +40,23 @@ namespace WcfServiceLibrary
         {
             ICalServiceEvents subscriber = OperationContext.Current.GetCallbackChannel<ICalServiceEvents>();
             m_Event2 += subscriber.CalculationFinished;
+            init_timer();
         }
+
+        public void init_timer()
+        {
+            Timer timer = new Timer();
+            timer.Elapsed += new ElapsedEventHandler(TimeEvent);
+            timer.Interval = 2000;
+            timer.Enabled = true;
+        }
+        private void TimeEvent(object source, ElapsedEventArgs e)
+        {
+            int veloLibre;
+            veloLibre = getAvailableBikesService(town, station);
+            m_Event1(veloLibre, town, station);
+        }
+
         private int getAvailableBikesService(string town, string station)
         {
 
